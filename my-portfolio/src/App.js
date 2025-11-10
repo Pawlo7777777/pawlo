@@ -246,7 +246,7 @@ export default function ModernPortfolio() {
         </div>
 
         {/* Enhanced scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex justify-center">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex justify-center m-2">
           <div className="w-2.5 sm:w-3 h-8 sm:h-10 border-2 border-cyan-500/50 rounded-full flex justify-center items-start overflow-hidden">
             <div className="w-1 h-2 sm:h-3 bg-cyan-500 rounded-full mt-1 animate-scroll"></div>
           </div>
