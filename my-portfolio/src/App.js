@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code, Palette, Zap, Award, Users, Coffee, ArrowRight, Star, Briefcase, Sparkles, Rocket, PenTool, Pen } from 'lucide-react';
+import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code, Palette, Zap, Award, Users, Coffee, ArrowRight, Star, Briefcase, Sparkles, Rocket, Pen } from 'lucide-react';
 
 export default function ModernPortfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
