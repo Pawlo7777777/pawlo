@@ -1,11 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code, Palette, Zap, Award, Users, Coffee, ArrowRight, Star, Briefcase, Sparkles, Rocket, Pen } from 'lucide-react';
+import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code, Palette, Zap, Award, Users, Coffee, ArrowRight, Star, Briefcase, Sparkles, Rocket, Pen, Moon, Sun } from 'lucide-react';
 
 export default function ModernPortfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [activeSection, setActiveSection] = useState('home');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // Initialize theme on component mount
+  useEffect(() => {
+    // Check for saved theme preference or prefer-color-scheme
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    } else {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  // Toggle dark/light mode
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,13 +75,13 @@ export default function ModernPortfolio() {
     },
     {
       title: "NSTP Attendance Monitoring",
-      description: "The **NSTP Monitoring System using QR Code** is a digital solution that tracks student attendance and participation through QR code scanning for efficient and accurate monitoring",
+      description: "The NSTP Monitoring System using QR Code is a digital solution that tracks student attendance and participation through QR code scanning for efficient and accurate monitoring",
       tech: ["React", "PHP", "OAuth", "MySQL"],
       gradient: "from-blue-500 to-cyan-500",
       category: "Web App"
     },
     {
-    title: "Waste Detection Management",
+      title: "Waste Detection Management",
       description: "Waste Detection Management in Python is a computer-vision system that uses trained models to automatically detect and classify waste into categories (residual, non-biodegradable, recyclable, compostable), enabling automated sorting, tracking, and reporting for efficient waste management.",
       tech: ["Python", "TensorFlow", "Pandas", "Numpy"],
       gradient: "from-orange-500 to-red-500",
@@ -95,32 +124,46 @@ export default function ModernPortfolio() {
   ];
 
   const stats = [
-    { icon: <Briefcase className="w-8 h-8" />, value: "20", label: "Projects Completed" },
-    { icon: <Users className="w-8 h-8" />, value: "20", label: "Happy Clients" },
-    { icon: <Award className="w-8 h-8" />, value: "3", label: "Years Experience" },
+    { icon: <Briefcase className="w-8 h-8" />, value: "10", label: "Projects Completed" },
+    { icon: <Users className="w-8 h-8" />, value: "10", label: "Happy Clients" },
+    { icon: <Award className="w-8 h-8" />, value: "2", label: "Years Experience" },
     { icon: <Coffee className="w-8 h-8" />, value: "100+", label: "Cups of Coffee" }
   ];
 
   return (
-    <div className="bg-slate-950 text-white min-h-screen overflow-x-hidden">
+    <div className={`min-h-screen overflow-x-hidden transition-colors duration-500 ${
+      isDarkMode 
+        ? 'bg-slate-950 text-white' 
+        : 'bg-slate-50 text-slate-900'
+    }`}>
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-slate-950/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-slate-800/50' : 'bg-transparent'}`}>
-        <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className={`fixed w-full z-50 transition-all duration-500 ${
+        isScrolled 
+          ? isDarkMode 
+            ? 'bg-slate-950/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-slate-800/50' 
+            : 'bg-white/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-slate-200/50'
+          : 'bg-transparent'
+      }`}>
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0">
               <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-gradient">
-                PV.
+                PV
               </span>
             </div>
             
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center space-x-8">
               <div className="flex items-center space-x-8">
                 {['Home', 'About', 'Projects', 'Contact'].map((item) => (
                   <a
                     key={item}
                     href={`#${item.toLowerCase()}`}
                     className={`hover:text-cyan-400 transition-all duration-300 relative group font-medium ${
-                      activeSection === item.toLowerCase() ? 'text-cyan-400' : ''
+                      activeSection === item.toLowerCase() 
+                        ? 'text-cyan-400' 
+                        : isDarkMode 
+                          ? 'text-slate-300' 
+                          : 'text-slate-700'
                     }`}
                   >
                     {item}
@@ -130,10 +173,49 @@ export default function ModernPortfolio() {
                   </a>
                 ))}
               </div>
+              
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className={`p-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                  isDarkMode 
+                    ? 'bg-slate-800 hover:bg-slate-700' 
+                    : 'bg-slate-100 hover:bg-slate-200'
+                }`}
+                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative">
+                  {isDarkMode ? (
+                    <Sun className="w-5 h-5 text-amber-500" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-slate-700" />
+                  )}
+                </div>
+              </button>
             </div>
             
-            <div className="md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white hover:text-cyan-400 transition-colors">
+            <div className="md:hidden flex items-center gap-4">
+              <button
+                onClick={toggleTheme}
+                className={`p-2 rounded-lg transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'bg-slate-800 hover:bg-slate-700' 
+                    : 'bg-slate-100 hover:bg-slate-200'
+                }`}
+                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5 text-amber-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-slate-700" />
+                )}
+              </button>
+              
+              <button 
+                onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                className={isDarkMode ? 'text-white hover:text-cyan-400' : 'text-slate-700 hover:text-cyan-400'}
+              >
                 {isMenuOpen ? <X /> : <Menu />}
               </button>
             </div>
@@ -141,13 +223,21 @@ export default function ModernPortfolio() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden bg-slate-900/98 backdrop-blur-xl border-b border-slate-800/50">
+          <div className={`md:hidden backdrop-blur-xl border-b ${
+            isDarkMode 
+              ? 'bg-slate-900/98 border-slate-800/50' 
+              : 'bg-white/98 border-slate-200/50'
+          }`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
               {['Home', 'About', 'Projects', 'Contact'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="block px-3 py-2 hover:bg-slate-800 rounded-lg transition-all duration-200"
+                  className={`block px-3 py-2 rounded-lg transition-all duration-200 ${
+                    isDarkMode 
+                      ? 'text-slate-300 hover:bg-slate-800' 
+                      : 'text-slate-700 hover:bg-slate-100'
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item}
@@ -161,17 +251,27 @@ export default function ModernPortfolio() {
       {/* Hero Section */}
       <section id="home" className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
         {/* Enhanced background effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10"></div>
+        <div className={`absolute inset-0 ${
+          isDarkMode 
+            ? 'bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10' 
+            : 'bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5'
+        }`}></div>
         
         {/* Multiple animated orbs with different speeds */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full filter blur-3xl animate-float"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl animate-float-delayed"></div>
-          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-purple-500/10 rounded-full filter blur-3xl animate-float-slow"></div>
+          <div className={`absolute top-1/4 left-1/4 w-96 h-96 rounded-full filter blur-3xl animate-float ${
+            isDarkMode ? 'bg-cyan-500/20' : 'bg-cyan-500/10'
+          }`}></div>
+          <div className={`absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full filter blur-3xl animate-float-delayed ${
+            isDarkMode ? 'bg-blue-500/20' : 'bg-blue-500/10'
+          }`}></div>
+          <div className={`absolute top-1/2 left-1/2 w-96 h-96 rounded-full filter blur-3xl animate-float-slow ${
+            isDarkMode ? 'bg-purple-500/10' : 'bg-purple-500/5'
+          }`}></div>
         </div>
 
         {/* Animated grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-5 animate-grid"></div>
+        <div className="absolute inset-0 bg-grid-pattern animate-grid opacity-5"></div>
         
         {/* Interactive cursor follower */}
         <div 
@@ -184,7 +284,11 @@ export default function ModernPortfolio() {
         ></div>
         
         <div className="text-center z-10 max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full mb-6 animate-fade-in-up backdrop-blur-sm">
+          <div className={`inline-flex items-center gap-2 px-4 py-2 border rounded-full mb-6 animate-fade-in-up backdrop-blur-sm ${
+            isDarkMode 
+              ? 'bg-cyan-500/10 border-cyan-500/20' 
+              : 'bg-cyan-500/10 border-cyan-500/20'
+          }`}>
             <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
             <span className="text-cyan-400 text-sm font-medium">Welcome to my portfolio</span>
           </div>
@@ -196,24 +300,44 @@ export default function ModernPortfolio() {
           </h1>
           
           <div className="flex flex-wrap justify-center gap-3 mb-8 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-            <span className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70 transition-all duration-300 backdrop-blur-sm">Full Stack Developer</span>
-            <span className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70 transition-all duration-300 backdrop-blur-sm">UI/UX Designer</span>
-            <span className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70 transition-all duration-300 backdrop-blur-sm">Creative Thinker</span>
-             <span className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-xl text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70 transition-all duration-300 backdrop-blur-sm">Problem Solver</span>
+            <span className={`px-4 py-2 border rounded-xl transition-all duration-300 backdrop-blur-sm ${
+              isDarkMode 
+                ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70' 
+                : 'bg-white/50 border-slate-300 text-slate-700 hover:border-cyan-500/50 hover:bg-white/70'
+            }`}>Web Developer</span>
+            <span className={`px-4 py-2 border rounded-xl transition-all duration-300 backdrop-blur-sm ${
+              isDarkMode 
+                ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70' 
+                : 'bg-white/50 border-slate-300 text-slate-700 hover:border-cyan-500/50 hover:bg-white/70'
+            }`}>UI/UX Designer</span>
+            <span className={`px-4 py-2 border rounded-xl transition-all duration-300 backdrop-blur-sm ${
+              isDarkMode 
+                ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70' 
+                : 'bg-white/50 border-slate-300 text-slate-700 hover:border-cyan-500/50 hover:bg-white/70'
+            }`}>Creative Thinker</span>
+            <span className={`px-4 py-2 border rounded-xl transition-all duration-300 backdrop-blur-sm ${
+              isDarkMode 
+                ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/70' 
+                : 'bg-white/50 border-slate-300 text-slate-700 hover:border-cyan-500/50 hover:bg-white/70'
+            }`}>Problem Solver</span>
           </div>
           
-          <p className="text-lg md:text-xl text-slate-300 mb-4 max-w-3xl mx-auto animate-fade-in-up leading-relaxed" style={{animationDelay: '0.3s'}}>
+          <p className={`text-lg md:text-xl mb-4 max-w-3xl mx-auto animate-fade-in-up leading-relaxed ${
+            isDarkMode ? 'text-slate-300' : 'text-slate-600'
+          }`} style={{animationDelay: '0.3s'}}>
             Passionate about crafting exceptional digital experiences through clean code, 
             intuitive design, and innovative solutions that make a difference.
           </p>
           
-          <p className="text-base md:text-lg text-slate-400 mb-12 max-w-2xl mx-auto animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+          <p className={`text-base md:text-lg mb-12 max-w-2xl mx-auto animate-fade-in-up ${
+            isDarkMode ? 'text-slate-400' : 'text-slate-500'
+          }`} style={{animationDelay: '0.4s'}}>
             Specializing in modern web technologies, responsive design, and building scalable applications 
             that users love and businesses rely on.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{animationDelay: '0.5s'}}>
-            <a href="#projects" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold overflow-hidden">
+            <a href="#projects" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-white overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative flex items-center justify-center gap-2">
                 View My Work
@@ -221,7 +345,11 @@ export default function ModernPortfolio() {
               </div>
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
             </a>
-            <a href="#contact" className="group px-8 py-4 border-2 border-cyan-500 rounded-xl font-semibold hover:bg-cyan-500/10 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden">
+            <a href="#contact" className={`group px-8 py-4 border-2 border-cyan-500 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden ${
+              isDarkMode 
+                ? 'text-cyan-400 hover:bg-cyan-500/10' 
+                : 'text-cyan-500 hover:bg-cyan-500/10'
+            }`}>
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
               <div className="relative flex items-center gap-2">
                 Let's Talk
@@ -237,9 +365,15 @@ export default function ModernPortfolio() {
               { icon: <Linkedin className="w-5 h-5" />, href: "https://www.linkedin.com/in/paolo-villanueva-85167a387/" },
               { icon: <Mail className="w-5 h-5" />, href: "mailto:paolovillanueva7777777@gmail.com" }
             ].map((social, idx) => (
-              <a key={idx} href={social.href} className="group relative p-3 bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+              <a key={idx} href={social.href} className={`group relative p-3 border rounded-lg overflow-hidden ${
+                isDarkMode 
+                  ? 'bg-slate-800/50 border-slate-700' 
+                  : 'bg-white/50 border-slate-300'
+              }`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative group-hover:scale-110 transition-transform duration-300">
+                <div className={`relative group-hover:scale-110 transition-transform duration-300 ${
+                  isDarkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-700 group-hover:text-white'
+                }`}>
                   {social.icon}
                 </div>
               </a>
@@ -256,7 +390,7 @@ export default function ModernPortfolio() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 md:py-32 px-4 bg-slate-900/50 relative">
+      <section id="about" className="py-20 md:py-32 px-4 relative">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -270,35 +404,41 @@ export default function ModernPortfolio() {
                 Turning Ideas Into Reality
               </span>
             </h2>
-            <p className="text-slate-400 text-lg max-w-3xl mx-auto">
+            <p className={`text-lg max-w-3xl mx-auto ${
+              isDarkMode ? 'text-slate-400' : 'text-slate-600'
+            }`}>
               A passionate developer dedicated to creating meaningful digital experiences
             </p>
           </div>
 
           {/* About Text with enhanced styling */}
           <div className="max-w-4xl mx-auto mb-20">
-            <div className="relative bg-slate-800/30 border border-slate-700/50 rounded-2xl p-8 md:p-12 backdrop-blur-sm overflow-hidden group">
+            <div className={`relative border rounded-2xl p-8 md:p-12 backdrop-blur-sm overflow-hidden group ${
+              isDarkMode 
+                ? 'bg-slate-800/30 border-slate-700/50' 
+                : 'bg-white/30 border-slate-300/50'
+            }`}>
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
               <div className="relative">
-                <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                  I'm a Full Stack Developer with over 2 years of experience building web applications 
+                <p className={`text-lg leading-relaxed mb-6 ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                }`}>
+                  I'm a Web Developer with over 2 years of experience building web applications 
                   that combine beautiful design with powerful functionality. My journey in tech started 
                   with a curiosity about how things work, which evolved into a passion for creating 
                   solutions that make people's lives easier.
                 </p>
-                <p className="text-slate-300 text-lg leading-relaxed mb-6">
-                  Throughout my career, I've had the privilege of working with startups, agencies, and 
-                  established companies, helping them bring their digital visions to life. I believe in 
-                  writing clean, maintainable code and creating user experiences that are not just 
-                  functional, but delightful.
-                </p>
-                <p className="text-slate-300 text-lg leading-relaxed mb-6">
+                <p className={`text-lg leading-relaxed mb-6 ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   When I'm not coding, you'll find me exploring new technologies, contributing to 
                   open-source projects, or sharing knowledge with the developer community. I'm always 
                   excited to take on new challenges and collaborate on innovative projects.
                 </p>
-                <p className="text-slate-300 text-lg leading-relaxed">
+                <p className={`text-lg leading-relaxed ${
+                  isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                }`}>
                   My approach combines technical expertise with creative problem-solving, ensuring 
                   that every project I work on is built to scale, optimized for performance, and 
                   designed with the end user in mind.
@@ -310,7 +450,11 @@ export default function ModernPortfolio() {
           {/* Stats with enhanced animations */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
             {stats.map((stat, idx) => (
-              <div key={idx} className="group relative bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 text-center overflow-hidden transition-all duration-500 hover:transform hover:scale-105">
+              <div key={idx} className={`group relative border rounded-2xl p-6 text-center overflow-hidden transition-all duration-500 hover:transform hover:scale-105 ${
+                isDarkMode 
+                  ? 'bg-slate-800/30 border-slate-700/50' 
+                  : 'bg-white/30 border-slate-300/50'
+              }`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-cyan-500/5 to-transparent"></div>
                 <div className="relative">
@@ -320,7 +464,9 @@ export default function ModernPortfolio() {
                   <div className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                     {stat.value}
                   </div>
-                  <div className="text-slate-400 text-sm md:text-base">{stat.label}</div>
+                  <div className={`text-sm md:text-base ${
+                    isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                  }`}>{stat.label}</div>
                 </div>
               </div>
             ))}
@@ -335,7 +481,11 @@ export default function ModernPortfolio() {
             </h3>
             <div className="grid md:grid-cols-3 gap-8">
               {skills.map((skill, idx) => (
-                <div key={idx} className="group relative bg-slate-800/30 border border-slate-700/50 rounded-2xl p-8 overflow-hidden transition-all duration-500 hover:transform hover:scale-105">
+                <div key={idx} className={`group relative border rounded-2xl p-8 overflow-hidden transition-all duration-500 hover:transform hover:scale-105 ${
+                  isDarkMode 
+                    ? 'bg-slate-800/30 border-slate-700/50' 
+                    : 'bg-white/30 border-slate-300/50'
+                }`}>
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/0 group-hover:via-cyan-500/50 to-transparent transition-all duration-500"></div>
                   <div className="relative">
@@ -343,11 +493,17 @@ export default function ModernPortfolio() {
                       <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-xl text-cyan-400 group-hover:scale-110 transition-transform duration-300">
                         {skill.icon}
                       </div>
-                      <h3 className="text-xl md:text-2xl font-bold">{skill.name}</h3>
+                      <h3 className={`text-xl md:text-2xl font-bold ${
+                        isDarkMode ? 'text-white' : 'text-slate-800'
+                      }`}>{skill.name}</h3>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {skill.items.map((item, i) => (
-                        <div key={i} className="flex items-center gap-2 text-slate-300 bg-slate-900/50 rounded-lg px-3 py-2 hover:bg-slate-900/70 transition-colors duration-200">
+                        <div key={i} className={`flex items-center gap-2 rounded-lg px-3 py-2 transition-colors duration-200 ${
+                          isDarkMode 
+                            ? 'text-slate-300 bg-slate-900/50 hover:bg-slate-900/70' 
+                            : 'text-slate-700 bg-slate-100/50 hover:bg-slate-200/70'
+                        }`}>
                           <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
                           <span className="text-sm">{item}</span>
                         </div>
@@ -363,7 +519,11 @@ export default function ModernPortfolio() {
 
       {/* Featured Projects Section */}
       <section id="projects" className="py-20 md:py-32 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent"></div>
+        <div className={`absolute inset-0 ${
+          isDarkMode 
+            ? 'bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent' 
+            : 'bg-gradient-to-b from-transparent via-cyan-500/3 to-transparent'
+        }`}></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
@@ -376,28 +536,46 @@ export default function ModernPortfolio() {
                 Featured Projects
               </span>
             </h2>
-            <p className="text-slate-400 text-lg max-w-3xl mx-auto">
+            <p className={`text-lg max-w-3xl mx-auto ${
+              isDarkMode ? 'text-slate-400' : 'text-slate-600'
+            }`}>
               Showcasing my best work - from concept to deployment
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredProjects.map((project, idx) => (
-              <div key={idx} className="group bg-slate-800/30 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/20">
+              <div key={idx} className={`group border rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/20 ${
+                isDarkMode 
+                  ? 'bg-slate-800/30 border-slate-700/50' 
+                  : 'bg-white/30 border-slate-300/50'
+              }`}>
                 <div className={`h-56 bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-slate-950/30 group-hover:bg-slate-950/50 transition-all duration-500"></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+                  <div className={`absolute inset-0 ${
+                    isDarkMode 
+                      ? 'bg-slate-950/30 group-hover:bg-slate-950/50' 
+                      : 'bg-white/30 group-hover:bg-white/50'
+                  } transition-all duration-500`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-t ${
+                    isDarkMode ? 'from-slate-950' : 'from-white'
+                  } via-transparent to-transparent opacity-60`}></div>
                   
                   {/* Animated grid overlay */}
                   <div className="absolute inset-0 bg-grid-pattern opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
                   
                   <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 bg-slate-950/70 backdrop-blur-sm rounded-full text-xs font-semibold border border-white/10">
+                    <span className={`px-3 py-1 backdrop-blur-sm rounded-full text-xs font-semibold border ${
+                      isDarkMode 
+                        ? 'bg-slate-950/70 border-white/10 text-white' 
+                        : 'bg-white/70 border-slate-300 text-slate-800'
+                    }`}>
                       {project.category}
                     </span>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <div className="bg-slate-950/90 backdrop-blur-sm p-4 rounded-xl transform scale-75 group-hover:scale-100 transition-transform duration-500">
+                    <div className={`backdrop-blur-sm p-4 rounded-xl transform scale-75 group-hover:scale-100 transition-transform duration-500 ${
+                      isDarkMode ? 'bg-slate-950/90' : 'bg-white/90'
+                    }`}>
                       <ExternalLink className="w-8 h-8 text-cyan-400" />
                     </div>
                   </div>
@@ -407,11 +585,19 @@ export default function ModernPortfolio() {
                 </div>
                 <div className="p-6 relative">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
-                  <h3 className="text-2xl font-bold mb-3 group-hover:text-cyan-400 transition-colors duration-300">{project.title}</h3>
-                  <p className="text-slate-400 mb-4 leading-relaxed">{project.description}</p>
+                  <h3 className={`text-2xl font-bold mb-3 group-hover:text-cyan-400 transition-colors duration-300 ${
+                    isDarkMode ? 'text-white' : 'text-slate-800'
+                  }`}>{project.title}</h3>
+                  <p className={`mb-4 leading-relaxed ${
+                    isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                  }`}>{project.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {project.tech.map((tech, i) => (
-                      <span key={i} className="px-3 py-1 bg-slate-900/50 border border-slate-700/50 rounded-lg text-xs text-cyan-400 font-medium hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all duration-200">
+                      <span key={i} className={`px-3 py-1 border rounded-lg text-xs text-cyan-400 font-medium hover:bg-cyan-500/10 hover:border-cyan-500/50 transition-all duration-200 ${
+                        isDarkMode 
+                          ? 'bg-slate-900/50 border-slate-700/50' 
+                          : 'bg-slate-100/50 border-slate-300/50'
+                      }`}>
                         {tech}
                       </span>
                     ))}
@@ -424,7 +610,9 @@ export default function ModernPortfolio() {
       </section>
 
       {/* Recent Projects Section */}
-      <section className="py-20 md:py-32 px-4 bg-slate-900/50 relative">
+      <section className={`py-20 md:py-32 px-4 relative ${
+        isDarkMode ? 'bg-slate-900/50' : 'bg-slate-100/50'
+      }`}>
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -435,16 +623,26 @@ export default function ModernPortfolio() {
                 Recent Projects
               </span>
             </h2>
-            <p className="text-slate-400 text-lg max-w-3xl mx-auto">
+            <p className={`text-lg max-w-3xl mx-auto ${
+              isDarkMode ? 'text-slate-400' : 'text-slate-600'
+            }`}>
               Exploring diverse challenges across different domains
             </p>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentProjects.map((project, idx) => (
-              <div key={idx} className="group bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-xl hover:shadow-cyan-500/10">
+              <div key={idx} className={`group border rounded-xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 hover:transform hover:-translate-y-2 hover:shadow-xl hover:shadow-cyan-500/10 ${
+                isDarkMode 
+                  ? 'bg-slate-800/30 border-slate-700/50' 
+                  : 'bg-white/30 border-slate-300/50'
+              }`}>
                 <div className={`h-40 bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/60 transition-all duration-500"></div>
+                  <div className={`absolute inset-0 ${
+                    isDarkMode 
+                      ? 'bg-slate-950/40 group-hover:bg-slate-950/60' 
+                      : 'bg-white/40 group-hover:bg-white/60'
+                  } transition-all duration-500`}></div>
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <div className="transform group-hover:scale-110 transition-transform duration-300">
                       <Star className="w-6 h-6 text-white" />
@@ -453,11 +651,17 @@ export default function ModernPortfolio() {
                   <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-cyan-400 transition-colors duration-300">{project.title}</h3>
-                  <p className="text-slate-400 text-sm mb-4">{project.description}</p>
+                  <h3 className={`text-xl font-bold mb-2 group-hover:text-cyan-400 transition-colors duration-300 ${
+                    isDarkMode ? 'text-white' : 'text-slate-800'
+                  }`}>{project.title}</h3>
+                  <p className={`text-sm mb-4 ${
+                    isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                  }`}>{project.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {project.tech.map((tech, i) => (
-                      <span key={i} className="px-2 py-1 bg-slate-900/50 rounded text-xs text-cyan-400 hover:bg-cyan-500/10 transition-colors duration-200">
+                      <span key={i} className={`px-2 py-1 rounded text-xs text-cyan-400 hover:bg-cyan-500/10 transition-colors duration-200 ${
+                        isDarkMode ? 'bg-slate-900/50' : 'bg-slate-100/50'
+                      }`}>
                         {tech}
                       </span>
                     ))}
@@ -471,10 +675,18 @@ export default function ModernPortfolio() {
 
       {/* Contact Section */}
       <section id="contact" className="py-20 md:py-32 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10"></div>
+        <div className={`absolute inset-0 ${
+          isDarkMode 
+            ? 'bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10' 
+            : 'bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5'
+        }`}></div>
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full filter blur-3xl animate-float"></div>
-          <div className="absolute bottom-1/2 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-float-delayed"></div>
+          <div className={`absolute top-1/2 left-1/4 w-96 h-96 rounded-full filter blur-3xl animate-float ${
+            isDarkMode ? 'bg-cyan-500/10' : 'bg-cyan-500/5'
+          }`}></div>
+          <div className={`absolute bottom-1/2 right-1/4 w-96 h-96 rounded-full filter blur-3xl animate-float-delayed ${
+            isDarkMode ? 'bg-blue-500/10' : 'bg-blue-500/5'
+          }`}></div>
         </div>
         
         <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -487,10 +699,14 @@ export default function ModernPortfolio() {
               Let's Build Something Amazing
             </span>
           </h2>
-          <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto">
+          <p className={`text-xl mb-6 max-w-2xl mx-auto ${
+            isDarkMode ? 'text-slate-300' : 'text-slate-700'
+          }`}>
             Have a project in mind? I'm always open to discussing new opportunities and creative collaborations.
           </p>
-          <p className="text-slate-400 mb-12">
+          <p className={`mb-12 ${
+            isDarkMode ? 'text-slate-400' : 'text-slate-600'
+          }`}>
             Whether you need a complete web application, want to improve your existing platform, 
             or just want to chat about technology, I'd love to hear from you.
           </p>
@@ -501,17 +717,23 @@ export default function ModernPortfolio() {
               { icon: <Linkedin className="w-5 h-5" />, href: "https://www.linkedin.com/in/paolo-villanueva-85167a387/" },
               { icon: <Mail className="w-5 h-5" />, href: "mailto:paolovillanueva7777777@gmail.com" }
             ].map((social, idx) => (
-              <a key={idx} href={social.href} className="group relative p-5 bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden transition-all duration-300 hover:scale-110">
+              <a key={idx} href={social.href} className={`group relative p-5 border rounded-xl overflow-hidden transition-all duration-300 hover:scale-110 ${
+                isDarkMode 
+                  ? 'bg-slate-800/50 border-slate-700/50' 
+                  : 'bg-white/50 border-slate-300/50'
+              }`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-cyan-500/20 to-transparent"></div>
-                <div className="relative">
+                <div className={`relative ${
+                  isDarkMode ? 'text-slate-300 group-hover:text-white' : 'text-slate-700 group-hover:text-white'
+                }`}>
                   {social.icon}
                 </div>
               </a>
             ))}
           </div>
           
-          <a href="mailto:your.email@example.com" className="group relative inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-lg overflow-hidden">
+          <a href="mailto:paolovillanueva7777777@gmail.com" className="group relative inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl font-semibold text-lg text-white overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
             <div className="relative flex items-center gap-3">
@@ -523,20 +745,30 @@ export default function ModernPortfolio() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-slate-800 bg-slate-900/50 relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent"></div>
+      <footer className={`py-12 px-4 border-t relative ${
+        isDarkMode 
+          ? 'border-slate-800 bg-slate-900/50' 
+          : 'border-slate-300 bg-slate-100/50'
+      }`}>
+        <div className={`absolute inset-0 bg-gradient-to-t ${
+          isDarkMode ? 'from-slate-950' : 'from-slate-50'
+        } to-transparent`}></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
               <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
                 Paolo Villanueva
               </div>
-              <p className="text-slate-400 text-sm">Building the future, one line of code at a time.</p>
+              <p className={`text-sm ${
+                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+              }`}>Building the future, one line of code at a time.</p>
             </div>
             
             <div className="flex gap-6">
               {['Home', 'About', 'Projects', 'Contact'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase()}`} className="text-slate-400 hover:text-cyan-400 transition-colors text-sm relative group">
+                <a key={item} href={`#${item.toLowerCase()}`} className={`hover:text-cyan-400 transition-colors text-sm relative group ${
+                  isDarkMode ? 'text-slate-400' : 'text-slate-600'
+                }`}>
                   {item}
                   <span className="absolute bottom-0 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
                 </a>
@@ -544,7 +776,11 @@ export default function ModernPortfolio() {
             </div>
           </div>
           
-          <div className="mt-8 pt-8 border-t border-slate-800 text-center text-slate-400 text-sm">
+          <div className={`mt-8 pt-8 border-t text-center text-sm ${
+            isDarkMode 
+              ? 'border-slate-800 text-slate-400' 
+              : 'border-slate-300 text-slate-600'
+          }`}>
             <p>© 2025 Paolo Villanueva. All rights reserved.</p>
           </div>
         </div>
